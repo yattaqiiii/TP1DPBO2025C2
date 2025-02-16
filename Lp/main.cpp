@@ -1,4 +1,4 @@
-#include "Petshop.h"
+#include "petshop.h"
 
 int main() {
     petshop toko; // membuat objek petshop
@@ -8,7 +8,7 @@ int main() {
 
     do {
         // menampilkan menu
-        cout << "menu:\n";
+        cout << "\nmenu:\n";
         cout << "1. tampilkan data\n";
         cout << "2. tambah data\n";
         cout << "3. ubah data\n";
@@ -17,7 +17,6 @@ int main() {
         cout << "6. keluar\n";
         cout << "pilih: ";
         cin >> pilihan;
-        cout << "\n";
 
         switch (pilihan) {
             case 1:

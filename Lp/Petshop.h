@@ -7,157 +7,88 @@ using namespace std;
 
 class petshop {
 private:
-    // struct untuk node linked list
-    struct produk {
-        int id;
-        string nama;
-        string kategori;
-        double harga;
-        produk* next; // pointer ke node selanjutnya
+    // konstanta untuk ukuran maksimum array
+    static const int MAX_PRODUK = 100;
 
-        // constructor untuk inisialisasi node
-        produk(int id, const string& nama, const string& kategori, double harga)
-            : id(id), nama(nama), kategori(kategori), harga(harga), next(nullptr) {}
-    };
-
-    produk* head; // pointer ke node pertama
-
-    // getter untuk id
-    int get_id(produk* node) const {
-        return node->id;
-    }
-
-    // setter untuk id
-    void set_id(produk* node, int new_id) {
-        node->id = new_id;
-    }
-
-    // getter untuk nama
-    string get_nama(produk* node) const {
-        return node->nama;
-    }
-
-    // setter untuk nama
-    void set_nama(produk* node, const string& new_nama) {
-        node->nama = new_nama;
-    }
-
-    // getter untuk kategori
-    string get_kategori(produk* node) const {
-        return node->kategori;
-    }
-
-    // setter untuk kategori
-    void set_kategori(produk* node, const string& new_kategori) {
-        node->kategori = new_kategori;
-    }
-
-    // getter untuk harga
-    double get_harga(produk* node) const {
-        return node->harga;
-    }
-
-    // setter untuk harga
-    void set_harga(produk* node, double new_harga) {
-        node->harga = new_harga;
-    }
+    // atribut untuk menyimpan data produk
+    int id_produk[MAX_PRODUK];          // array untuk menyimpan id produk
+    string nama_produk[MAX_PRODUK];     // array untuk menyimpan nama produk
+    string kategori_produk[MAX_PRODUK]; // array untuk menyimpan kategori produk
+    double harga_produk[MAX_PRODUK];    // array untuk menyimpan harga produk
+    int jumlah_produk;                  // variabel untuk menyimpan jumlah produk yang ada
 
 public:
     // constructor untuk inisialisasi
-    petshop() : head(nullptr) {}
-
-    // destructor untuk menghapus semua data
-    ~petshop() {
-        while (head != nullptr) {
-            produk* temp = head;
-            head = head->next;
-            delete temp;
-        }
-    }
+    petshop() : jumlah_produk(0) {}
 
     // method untuk menampilkan semua data produk
     void tampilkan_data() const {
-        if (head == nullptr) {
+        if (jumlah_produk == 0) {
             cout << "tidak ada data yang tersedia.\n";
             return;
         }
-        produk* current = head;
-        while (current != nullptr) {
-            cout << "id: " << get_id(current) << ", nama: " << get_nama(current)
-                 << ", kategori: " << get_kategori(current) << ", harga: " << get_harga(current) << "\n";
-            current = current->next;
+        for (int i = 0; i < jumlah_produk; i++) {
+            cout << "id: " << id_produk[i] << ", nama: " << nama_produk[i]
+                 << ", kategori: " << kategori_produk[i] << ", harga: " << harga_produk[i] << "\n";
         }
     }
 
     // method untuk menambahkan data produk baru
     void tambah_data(int id, const string& nama, const string& kategori, double harga) {
-        produk* new_produk = new produk(id, nama, kategori, harga);
-        if (head == nullptr) {
-            head = new_produk; // jika linked list kosong, tambahkan sebagai head
-        } else {
-            produk* current = head;
-            while (current->next != nullptr) {
-                current = current->next;
-            }
-            current->next = new_produk; // tambahkan di akhir linked list
+        if (jumlah_produk >= MAX_PRODUK) {
+            cout << "data sudah penuh, tidak bisa menambahkan data baru.\n";
+            return;
         }
+        id_produk[jumlah_produk] = id;          // simpan id produk
+        nama_produk[jumlah_produk] = nama;      // simpan nama produk
+        kategori_produk[jumlah_produk] = kategori; // simpan kategori produk
+        harga_produk[jumlah_produk] = harga;    // simpan harga produk
+        jumlah_produk++;                        // tambah jumlah produk
         cout << "data berhasil ditambahkan.\n";
     }
 
     // method untuk mengubah data produk berdasarkan id
     void ubah_data(int id, const string& nama_baru, const string& kategori_baru, double harga_baru) {
-        produk* current = head;
-        while (current != nullptr) {
-            if (get_id(current) == id) {
-                set_nama(current, nama_baru);          // ubah nama produk
-                set_kategori(current, kategori_baru); // ubah kategori produk
-                set_harga(current, harga_baru);       // ubah harga produk
+        for (int i = 0; i < jumlah_produk; i++) {
+            if (id_produk[i] == id) {
+                nama_produk[i] = nama_baru;          // ubah nama produk
+                kategori_produk[i] = kategori_baru;  // ubah kategori produk
+                harga_produk[i] = harga_baru;        // ubah harga produk
                 cout << "data berhasil diubah.\n";
                 return;
             }
-            current = current->next;
         }
         cout << "data dengan id " << id << " tidak ditemukan.\n";
     }
 
     // method untuk menghapus data produk berdasarkan id
     void hapus_data(int id) {
-        if (head == nullptr) {
-            cout << "tidak ada data yang tersedia.\n";
-            return;
-        }
-        if (get_id(head) == id) {
-            produk* temp = head;
-            head = head->next;
-            delete temp;
-            cout << "data berhasil dihapus.\n";
-            return;
-        }
-        produk* current = head;
-        while (current->next != nullptr) {
-            if (get_id(current->next) == id) {
-                produk* temp = current->next;
-                current->next = current->next->next;
-                delete temp;
+        for (int i = 0; i < jumlah_produk; i++) {
+            if (id_produk[i] == id) {
+                // geser semua data setelah indeks ke-i ke kiri
+                for (int j = i; j < jumlah_produk - 1; j++) {
+                    id_produk[j] = id_produk[j + 1];
+                    nama_produk[j] = nama_produk[j + 1];
+                    kategori_produk[j] = kategori_produk[j + 1];
+                    harga_produk[j] = harga_produk[j + 1];
+                }
+                jumlah_produk--; // kurangi jumlah produk
                 cout << "data berhasil dihapus.\n";
                 return;
             }
-            current = current->next;
         }
         cout << "data dengan id " << id << " tidak ditemukan.\n";
     }
 
     // method untuk mencari data produk berdasarkan nama
     void cari_data(const string& nama) const {
-        produk* current = head;
         bool ditemukan = false;
-        while (current != nullptr) {
-            if (get_nama(current) == nama) {
-                cout << "id: " << get_id(current) << ", nama: " << get_nama(current)
-                     << ", kategori: " << get_kategori(current) << ", harga: " << get_harga(current) << "\n";
+        for (int i = 0; i < jumlah_produk; i++) {
+            if (nama_produk[i] == nama) {
+                cout << "id: " << id_produk[i] << ", nama: " << nama_produk[i]
+                     << ", kategori: " << kategori_produk[i] << ", harga: " << harga_produk[i] << "\n";
                 ditemukan = true;
             }
-            current = current->next;
         }
         if (!ditemukan) {
             cout << "data dengan nama " << nama << " tidak ditemukan.\n";
